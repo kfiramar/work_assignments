@@ -1,7 +1,7 @@
 node('zip-job-docker') {
     docker.image('python:3.10').inside('--privileged') {
         // Set environment variables
-        env.ARTIFACTORY_SERVER = 'http://34.49.70.247'
+        env.ARTIFACTORY_SERVER = 'http://34.165.44.255'
         env.ARTIFACTORY_REPO = "binary-storage/${env.VERSION}"
         env.ARTIFACTORY_USER = 'super-user'
         env.ARTIFACTORY_PASSWORD = 'Qw12856!'
