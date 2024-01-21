@@ -1,0 +1,61 @@
+pipeline {
+    agent {
+        docker {
+            image 'python:3.10'
+            label 'zip-job-docker'
+            args '--privileged'
+        }
+    }
+
+
+
+
+
+
+
+
+    environment {
+        ARTIFACTORY_SERVER = 'http://34.49.70.247'
+        ARTIFACTORY_REPO = 'binary-storage/${VERSION}'
+        ARTIFACTORY_USER = 'super-user'
+        ARTIFACTORY_PASSWORD = 'Qw12856!'
+    }
+
+
+
+
+
+
+
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'python zip_job.py'
+            }
+        }
+        stage('Publish') {
+            when {
+                success()
+            }
+            steps {
+                sh """
+                    curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} \
+                    -T path/to/zip/files/*.zip \
+                    ${ARTIFACTORY_SERVER}/${ARTIFACTORY_REPO}/
+                """
+            }
+        }
+        stage('Report') {
+            steps {
+                mail to: 'kfira2709@gmail.com', // Replace with your email
+                     subject: "Build ${currentBuild.fullDisplayName} Status: ${currentBuild.currentResult}"
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+}
